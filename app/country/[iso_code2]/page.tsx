@@ -1,26 +1,21 @@
+import { notFound } from 'next/navigation';
 import { Country } from '@/types';
-import { fixUrl } from '@/utils';
 import Image from 'next/image';
+import { fixUrl } from '@/utils';
 
 export default async function CountryPage({
   params,
 }: {
   params: { iso_code2: string };
 }) {
-  const res = await fetch(
-    'https://gist.githubusercontent.com/sanchezzzhak/8606e9607396fb5f8216/raw/39de29950198a7332652e1e8224f988b2e94b166/ISO3166_RU.json',
-    { cache: 'no-store' }
-  );
-  const countries: Country[] = (await res.json()).slice(0, 20);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/countries`, {
+    cache: 'no-store',
+  });
+
+  const countries: Country[] = await res.json();
   const country = countries.find((c) => c.iso_code2 === params.iso_code2);
 
-  if (!country) {
-    return (
-      <div style={{ textAlign: 'center', marginTop: '50px' }}>
-        Страна не найдена
-      </div>
-    );
-  }
+  if (!country) return notFound();
 
   return (
     <div

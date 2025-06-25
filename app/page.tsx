@@ -2,11 +2,10 @@ import List from '@/components/list/List';
 import { Country } from '../types';
 
 export default async function Home() {
-  const res = await fetch(
-    'https://gist.githubusercontent.com/sanchezzzhak/8606e9607396fb5f8216/raw/39de29950198a7332652e1e8224f988b2e94b166/ISO3166_RU.json',
-    { cache: 'no-store' }
-  );
-  const countries: Country[] = (await res.json()).slice(0, 20);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/countries`, {
+    next: { revalidate: 600 },
+  });
+  const countries: Country[] = await res.json();
 
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-0 pb-20 gap-18 sm:p-0 sm:pb-20 font-[family-name:var(--font-geist-sans)]">
